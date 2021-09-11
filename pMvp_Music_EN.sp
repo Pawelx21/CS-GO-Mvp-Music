@@ -61,7 +61,7 @@ char g_sChatTag[64], g_sMenuTag[64];
 public Plugin myinfo =  {
 	name = "[CS:GO] Pawel - [ Mvp Music ]", 
 	author = "Pawel", 
-	description = "Własna muzyka Mvp dla każdego gracza.", 
+	description = "Own Mvp music for each player.", 
 	version = "1.3.0", 
 	url = "https://steamcommunity.com/id/pawelsteam"
 };
@@ -82,7 +82,7 @@ public void OnPluginStart() {
 	if (SQL_CheckConfig("Pawel_Mvp"))
 		Database.Connect(SQL_Connect_Handler, "Pawel_Mvp");
 	else
-		SetFailState("[ ✘ Mvp Music » Core ✘ ] Brak konfiguracji \"Pawel_Mvp\" w databases.cfg .");
+		SetFailState("[ ✘ Mvp Music » Core ✘ ] There is no configuration \"Pawel_Mvp\" in databases.cfg .");
 	
 	/* [ ArrayLists ] */
 	CreateArrays();
@@ -97,7 +97,7 @@ public void OnMapStart() {
 	if (SQL_CheckConfig("Pawel_Mvp"))
 		Database.Connect(SQL_Connect_Handler, "Pawel_Mvp");
 	else
-		SetFailState("[ ✘ Mvp Music » Core ✘ ] Brak konfiguracji \"Pawel_Mvp\" w databases.cfg .");
+		SetFailState("[ ✘ Mvp Music » Core ✘ ] There is no configuration \"Pawel_Mvp\" in databases.cfg .");
 	LoadConfig();
 }
 
@@ -127,8 +127,8 @@ public Action Mvp_Command(int iClient, int iArgs) {
 
 Menu DisplayMvpMenu(int iClient) {
 	char sBuffer[512], sName[128];
-	Format(sBuffer, sizeof(sBuffer), "[ ★ %s » Piosenki MVP ★ ]\n ", g_sMenuTag);
-	Format(sBuffer, sizeof(sBuffer), "%s\n➪ Witaj, %N!", sBuffer, iClient);
+	Format(sBuffer, sizeof(sBuffer), "[ ★ %s » MVP Music ★ ]\n ", g_sMenuTag);
+	Format(sBuffer, sizeof(sBuffer), "%s\n➪ Welcome, %N!", sBuffer, iClient);
 	if (g_eInfo[iClient].iSound > g_arSounds[0].Length) {
 		g_eInfo[iClient].iSound = -1;
 		g_eInfo[iClient].bSaveData = true;
@@ -136,14 +136,14 @@ Menu DisplayMvpMenu(int iClient) {
 	}
 	if (g_eInfo[iClient].iSound != -1) {
 		g_arSounds[1].GetString(g_eInfo[iClient].iSound, sName, sizeof(sName));
-		Format(sBuffer, sizeof(sBuffer), "%s\n➪ Aktualna piosenka: %s", sBuffer, sName);
+		Format(sBuffer, sizeof(sBuffer), "%s\n➪ Current song: %s", sBuffer, sName);
 	}
 	Format(sBuffer, sizeof(sBuffer), "%s\n---------------------------------", sBuffer);
 	g_mMenu = new Menu(Mvp_Handler);
 	g_mMenu.SetTitle(sBuffer);
-	g_mMenu.AddItem("", "» Wybierz piosenkę");
-	g_mMenu.AddItem("", "» Ustaw głośność");
-	Format(sBuffer, sizeof(sBuffer), "» %s piosenki MVP\n ", g_eInfo[iClient].bEnabled ? "Wyłącz":"Włącz");
+	g_mMenu.AddItem("", "» Choose Music");
+	g_mMenu.AddItem("", "» Set Volume");
+	Format(sBuffer, sizeof(sBuffer), "» %s MVP Music\n ", g_eInfo[iClient].bEnabled ? "Enable":"Disable");
 	g_mMenu.AddItem("", sBuffer);
 	return g_mMenu;
 }
@@ -157,7 +157,7 @@ public int Mvp_Handler(Menu mMenu, MenuAction maAction, int iClient, int iPositi
 					g_eInfo[iClient].bEnabled = g_eInfo[iClient].bEnabled ? false:true;
 					g_eInfo[iClient].bSaveData = true;
 					SQL_Update(iClient);
-					CPrintToChat(iClient, "%s Piosenki MVP zostały %s{default}.", g_sChatTag, g_eInfo[iClient].bEnabled ? "{lime}włączone":"{lightred}wyłączone");
+					CPrintToChat(iClient, "%s MVP Music has been %s{default}.", g_sChatTag, g_eInfo[iClient].bEnabled ? "{lime}enabled":"{lightred}disabled");
 					DisplayMvpMenu(iClient).Display(iClient, MENU_TIME_FOREVER);
 				}
 			}
@@ -168,10 +168,10 @@ public int Mvp_Handler(Menu mMenu, MenuAction maAction, int iClient, int iPositi
 
 Menu DisplayMvpOption(int iClient, int iType) {
 	char sBuffer[512], sName[128], sFlags[16], sItem[32];
-	Format(sBuffer, sizeof(sBuffer), "[ ★ %s » Piosenki MVP ★ ]\n ", g_sMenuTag);
+	Format(sBuffer, sizeof(sBuffer), "[ ★ %s » Mvp Music ★ ]\n ", g_sMenuTag);
 	switch (iType) {
 		case 0: {
-			Format(sBuffer, sizeof(sBuffer), "%s\n➪ Wybierz interesujący Cię utwór.", sBuffer);
+			Format(sBuffer, sizeof(sBuffer), "%s\n➪ Choose the song that interests you.", sBuffer);
 			Format(sBuffer, sizeof(sBuffer), "%s\n---------------------------------", sBuffer);
 			g_mMenu = new Menu(MvpList_Handler);
 			g_mMenu.SetTitle(sBuffer);
@@ -185,12 +185,12 @@ Menu DisplayMvpOption(int iClient, int iType) {
 				g_mMenu.AddItem(sItem, sBuffer, CheckDrawType(iClient, sFlags, i));
 			}
 			if (!g_mMenu.ItemCount)
-				g_mMenu.AddItem("", "» Właściciel serwera nie dodał żadnej piosenki :c\n ", ITEMDRAW_DISABLED);
+				g_mMenu.AddItem("", "» The server owner has not added any songs :c\n ", ITEMDRAW_DISABLED);
 			g_mMenu.ExitBackButton = true;
 		}
 		case 1: {
-			Format(sBuffer, sizeof(sBuffer), "[ ★ %s » Piosenki MVP ★ ]\n ", g_sMenuTag);
-			Format(sBuffer, sizeof(sBuffer), "%s\n➪ Głośność: %.2f", sBuffer, g_eInfo[iClient].fVolume);
+			Format(sBuffer, sizeof(sBuffer), "[ ★ %s » Mvp Music ★ ]\n ", g_sMenuTag);
+			Format(sBuffer, sizeof(sBuffer), "%s\n➪ Volume: %.2f", sBuffer, g_eInfo[iClient].fVolume);
 			Format(sBuffer, sizeof(sBuffer), "%s\n---------------------------------", sBuffer);
 			g_mMenu = new Menu(MvpVolume_Handler);
 			g_mMenu.SetTitle(sBuffer);
@@ -198,7 +198,7 @@ Menu DisplayMvpOption(int iClient, int iType) {
 			g_mMenu.AddItem("0.1", "» +0.1");
 			g_mMenu.AddItem("0.05", "» -0.05");
 			g_mMenu.AddItem("0.1", "» -0.1");
-			g_mMenu.AddItem("0.0", "» Wycisz\n ");
+			g_mMenu.AddItem("0.0", "» Mute\n ");
 			g_mMenu.ExitBackButton = true;
 		}
 	}
@@ -213,7 +213,7 @@ public int MvpList_Handler(Menu mMenu, MenuAction maAction, int iClient, int iPo
 			int iSoundId = StringToInt(sItem);
 			if (iSoundId != -1) {
 				g_arSounds[1].GetString(iSoundId, sName, sizeof(sName));
-				CPrintToChat(iClient, "%s Piosenka {lime}%s{default} została ustawiona.", g_sChatTag, sName);
+				CPrintToChat(iClient, "%s Song {lime}%s{default} has been changed.", g_sChatTag, sName);
 			}
 			g_eInfo[iClient].iSound = iSoundId;
 			g_eInfo[iClient].bSaveData = true;
@@ -274,7 +274,7 @@ public Action Event_RoundMvp(Event eEvent, const char[] sName, bool bDontBroadca
 		LoopClients(i) {
 			if (g_eInfo[i].bEnabled && g_eInfo[i].fVolume) {
 				ClientCommand(i, "playgamesound Music.StopAllMusic");
-				CPrintToChat(i, "%s Aktualnie leci piosenka {lime}%s{default}, która należy do {lime}%N{default}.", g_sChatTag, sSound, iClient);
+				CPrintToChat(i, "%s Now we are playing {lime}%s{default}, which belongs to {lime}%N{default}.", g_sChatTag, sSound, iClient);
 				EmitSoundToClientAny(i, sPath, -2, 0, 0, 0, g_eInfo[i].fVolume, 100, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 			}
 		}
@@ -287,7 +287,7 @@ public void SQL_Connect_Handler(Database dbDatabase, const char[] sError, any aD
 	if (g_dbDatabase != null)
 		return;
 	if (dbDatabase == null)
-		SetFailState("[ ✘ Mvp Music » Database ✘ ] Bład podczas połączenia z bazą: %s", sError);
+		SetFailState("[ ✘ Mvp Music » Database ✘ ] Error connecting to the base: %s", sError);
 	
 	dbDatabase.SetCharset("utf8mb4");
 	dbDatabase.Query(SQL_Init_Handler, g_sSQL_CreateTable, 0, DBPrio_High);
@@ -296,14 +296,14 @@ public void SQL_Connect_Handler(Database dbDatabase, const char[] sError, any aD
 
 public void SQL_Init_Handler(Database dbDatabase, DBResultSet rs, const char[] sError, any aData) {
 	if (rs == null)
-		SetFailState("[ ✘ Mvp Music » Database ✘ ] Nie udało się utworzyć tabeli \""...Table_Main..."\": %s", sError);
+		SetFailState("[ ✘ Mvp Music » Database ✘ ] The table could not be created \""...Table_Main..."\": %s", sError);
 }
 
 void SQL_PrepareLoadData(int iClient) {
 	if (!IsValidClient(iClient))return;
 	
 	if (g_dbDatabase == null) {
-		LogError("[ ✘ Mvp Music » Database ✘ ] Wystąpił problem podczas wszytywania danych gracza...");
+		LogError("[ ✘ Mvp Music » Database ✘ ] There was a problem loading player data ...");
 		return;
 	}
 	char sQuery[256];
@@ -314,7 +314,7 @@ void SQL_PrepareLoadData(int iClient) {
 
 public void SQL_LoadData_Handler(Database dbDatabase, DBResultSet rs, const char[] sError, int iClient) {
 	if (dbDatabase == null || rs == null) {
-		LogError("[ ✘ Mvp Music » Database ✘ ] Błąd podczas wczytywania danych z tabeli \""...Table_Main..."\":: %s", sError);
+		LogError("[ ✘ Mvp Music » Database ✘ ] Error loading data from the table \""...Table_Main..."\":: %s", sError);
 		return;
 	}
 	
@@ -348,7 +348,7 @@ void SQL_Update(int iClient) {
 
 public void SQL_MvpMusic_Handler(Database dbDatabase, DBResultSet rs, const char[] sError, int iClient) {
 	if (dbDatabase == null || rs == null) {
-		LogError("[ ✘ Mvp Music » Database ✘ ] Błąd podczas zapisywania danych w tabeli \""...Table_Main..."\": %s", sError);
+		LogError("[ ✘ Mvp Music » Database ✘ ] Error writing data to the table \""...Table_Main..."\": %s", sError);
 		return;
 	}
 	g_eInfo[iClient].bIsDataLoaded = true;
@@ -365,16 +365,16 @@ void LoadConfig() {
 			if (GenerateConfig())
 				LoadConfig();
 			else
-				SetFailState("[ ✘ Mvp Music » Config ✘ ] Nie udało się utworzyć pliku konfiguracyjnego!");
+				SetFailState("[ ✘ Mvp Music » Config ✘ ] The configuration file could not be created!");
 			delete kvKeyValues;
 			return;
 		}
 		else {
-			LogError("[ ✘ Mvp Music » Config ✘ ] Aktualny plik konfiguracyjny jest uszkodzony! Trwa tworzenie nowego...");
+			LogError("[ ✘ Mvp Music » Config ✘ ] The current configuration file is damaged! The creation of a new ...");
 			if (GenerateConfig())
 				LoadConfig();
 			else
-				SetFailState("[ ✘ Mvp Music » Config ✘ ] Nie udało się utworzyć pliku konfiguracyjnego!");
+				SetFailState("[ ✘ Mvp Music » Config ✘ ] The configuration file could not be created!");
 			delete kvKeyValues;
 			return;
 		}
@@ -405,7 +405,7 @@ void LoadConfig() {
 		kvKeyValues.GoBack();
 	}
 	if (!g_arSounds[0].Length)
-		SetFailState("[ ✘ Mvp Music » Config ✘ ] Nie wykryto żadnej piosenki w configu!");
+		SetFailState("[ ✘ Mvp Music » Config ✘ ]No song detected in config!");
 	LoadRandomSounds();
 	delete kvKeyValues;
 }
@@ -418,7 +418,7 @@ bool GenerateConfig() {
 	if (!DirExists(sPath)) {
 		CreateDirectory(sPath, 504);
 		if (!DirExists(sPath))
-			SetFailState("Nie udało się utworzyć katalogu /sourcemod/configs/pPlugins/ . Proszę to zrobić ręcznie.");
+			SetFailState("The directory /sourcemod/configs/pPlugins/ could not be created. Please do it manually.");
 	}
 	BuildPath(Path_SM, sPath, sizeof(sPath), "%spMvpMusic.cfg", sDirectory);
 	if (kvKeyValues.JumpToKey("Ustawienia", true)) {
@@ -504,7 +504,7 @@ void GetRandomSound() {
 	LoopClients(i) {
 		if (g_eInfo[i].bEnabled && g_eInfo[i].fVolume) {
 			ClientCommand(i, "playgamesound Music.StopAllMusic");
-			CPrintToChat(i, "%s Aktualnie leci piosenka {lime}%s{default}.", g_sChatTag, sSound);
+			CPrintToChat(i, "%s Now we are playing {lime}%s{default}.", g_sChatTag, sSound);
 			EmitSoundToClientAny(i, sPath, -2, 0, 0, 0, g_eInfo[i].fVolume, 100, -1, NULL_VECTOR, NULL_VECTOR, true, 0.0);
 		}
 	}
