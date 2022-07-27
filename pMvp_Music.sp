@@ -320,6 +320,8 @@ public void SQL_LoadData_Handler(Database dbDatabase, DBResultSet rs, const char
 	
 	if (rs.RowCount && rs.FetchRow()) {
 		g_eInfo[iClient].iSound = rs.FetchInt(1);
+		if(g_eInfo[iClient].iSound > g_arSounds[0].Length)
+			g_eInfo[iClient].iSound = -1;
 		g_eInfo[iClient].fVolume = rs.FetchFloat(2);
 		g_eInfo[iClient].bEnabled = view_as<bool>(rs.FetchInt(3));
 		g_eInfo[iClient].bIsDataLoaded = true;
